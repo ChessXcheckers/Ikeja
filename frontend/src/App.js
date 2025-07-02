@@ -607,6 +607,29 @@ const AuthModal = ({ isOpen, onClose }) => {
 const CartModal = ({ isOpen, onClose }) => {
   const { cart, removeFromCart } = useCart();
   const { user } = useAuth();
+  const [products, setProducts] = useState({});
+
+  // Fetch product details for cart items
+  useEffect(() => {
+    if (cart.items && cart.items.length > 0) {
+      const fetchProductDetails = async () => {
+        const productDetails = {};
+        for (const item of cart.items) {
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/products/${item.product_id}`);
+            if (response.ok) {
+              const product = await response.json();
+              productDetails[item.product_id] = product;
+            }
+          } catch (error) {
+            console.error('Error fetching product details:', error);
+          }
+        }
+        setProducts(productDetails);
+      };
+      fetchProductDetails();
+    }
+  }, [cart.items]);
 
   if (!isOpen) return null;
 
@@ -645,26 +668,38 @@ const CartModal = ({ isOpen, onClose }) => {
         ) : (
           <div>
             <div className="space-y-4 mb-6">
-              {cart.items.map(item => (
-                <div key={item.product_id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex-1">
-                    <h4 className="font-semibold">Product {item.product_id}</h4>
-                    <p className="text-gray-600">Quantity: {item.quantity}</p>
-                    <p className="text-gray-600">{formatPrice(item.price)} each</p>
+              {cart.items.map(item => {
+                const product = products[item.product_id];
+                return (
+                  <div key={item.product_id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      {product?.images?.[0] && (
+                        <img 
+                          src={product.images[0]} 
+                          alt={product.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{product?.name || `Product ${item.product_id}`}</h4>
+                        <p className="text-gray-600">Quantity: {item.quantity}</p>
+                        <p className="text-gray-600">{formatPrice(item.price)} each</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="font-semibold">{formatPrice(item.price * item.quantity)}</span>
+                      <button
+                        onClick={() => removeFromCart(item.product_id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="font-semibold">{formatPrice(item.price * item.quantity)}</span>
-                    <button
-                      onClick={() => removeFromCart(item.product_id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="border-t pt-4">
@@ -674,7 +709,10 @@ const CartModal = ({ isOpen, onClose }) => {
               </div>
               
               <div className="flex gap-4">
-                <button className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-full font-semibold hover:bg-gray-300 transition-colors">
+                <button 
+                  onClick={onClose}
+                  className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-full font-semibold hover:bg-gray-300 transition-colors"
+                >
                   Continue Shopping
                 </button>
                 <button className="flex-1 bg-black text-white py-3 rounded-full font-semibold hover:bg-gray-800 transition-colors">
