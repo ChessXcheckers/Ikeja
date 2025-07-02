@@ -408,9 +408,27 @@ async def get_orders(current_user: dict = Depends(get_current_user)):
 # Review routes
 @app.post("/api/reviews")
 async def create_review(review_data: Review, current_user: dict = Depends(get_current_user)):
+    # Validate product exists
+    product = products_collection.find_one({"id": review_data.product_id})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Check if user has already reviewed this product
+    existing_review = reviews_collection.find_one({
+        "product_id": review_data.product_id,
+        "user_id": current_user["id"]
+    })
+    
+    if existing_review:
+        raise HTTPException(status_code=400, detail="You have already reviewed this product")
+    
     review_data.user_id = current_user["id"]
     review_data.id = str(uuid.uuid4())
     review_data.created_at = datetime.now()
+    
+    # Validate rating is between 1 and 5
+    if review_data.rating < 1 or review_data.rating > 5:
+        raise HTTPException(status_code=400, detail="Rating must be between 1 and 5")
     
     reviews_collection.insert_one(review_data.dict())
     
@@ -423,7 +441,7 @@ async def create_review(review_data: Review, current_user: dict = Depends(get_cu
         {"$set": {"rating": round(avg_rating, 1), "review_count": len(reviews)}}
     )
     
-    return {"message": "Review created successfully"}
+    return {"message": "Review created successfully", "review_id": review_data.id}
 
 if __name__ == "__main__":
     import uvicorn
