@@ -213,7 +213,10 @@ def run_test_suite():
             "price": 1199.99  # This should match the product price
         }
         try:
+            print(f"DEBUG: Adding item to cart: {json.dumps(cart_item, indent=2)}")
             response = requests.post(f"{BACKEND_URL}/cart/add", json=cart_item, headers=auth_headers)
+            print(f"DEBUG: Response status code: {response.status_code}")
+            print(f"DEBUG: Response body: {response.text}")
             success = response.status_code == 200 and "cart" in response.json()
             if success:
                 results["passed"] += 1
