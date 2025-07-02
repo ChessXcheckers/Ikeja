@@ -371,9 +371,14 @@ async def add_to_cart(item: CartItem, current_user: dict = Depends(get_current_u
 async def remove_from_cart(product_id: str, current_user: dict = Depends(get_current_user)):
     cart = carts_collection.find_one({"user_id": current_user["id"]})
     if not cart:
-        raise HTTPException(status_code=404, detail="Cart not found")
+        return {"message": "Cart is empty", "cart": {"user_id": current_user["id"], "items": [], "total_amount": 0}}
     
+    original_length = len(cart["items"])
     cart["items"] = [item for item in cart["items"] if item["product_id"] != product_id]
+    
+    if len(cart["items"]) == original_length:
+        raise HTTPException(status_code=404, detail="Item not found in cart")
+    
     cart["total_amount"] = sum(item["price"] * item["quantity"] for item in cart["items"])
     cart["updated_at"] = datetime.now()
     
