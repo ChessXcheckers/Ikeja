@@ -712,8 +712,19 @@ const App = () => {
   };
 
   const handleAddToCart = async (product) => {
-    // This will be implemented by the Cart context
-    console.log('Adding to cart:', product);
+    const { addToCart } = useCart();
+    const result = await addToCart(product.id, 1, product.price);
+    
+    if (result.success) {
+      // Show success feedback
+      console.log('Product added to cart successfully');
+    } else {
+      // Show error feedback
+      console.error('Failed to add product to cart:', result.error);
+      if (result.error.includes('login')) {
+        setAuthModalOpen(true);
+      }
+    }
   };
 
   if (loading) {
