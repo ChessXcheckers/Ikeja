@@ -329,9 +329,15 @@ def run_test_suite():
             "product_id": results["test_product_id"],
             "rating": 5,
             "comment": "Excellent product, highly recommended!",
-            "verified_purchase": True
+            "verified_purchase": True,
+            "user_id": "",  # This will be set by the server
+            "id": "",  # This will be set by the server
+            "created_at": ""  # This will be set by the server
         }
         try:
+            # Let's print the review data for debugging
+            print(f"DEBUG: Review data: {json.dumps(review_data, indent=2)}")
+            
             response = requests.post(f"{BACKEND_URL}/reviews", json=review_data, headers=auth_headers)
             success = response.status_code == 200
             if success:
