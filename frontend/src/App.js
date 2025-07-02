@@ -711,8 +711,33 @@ const App = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
+      </div>
+    );
+  }
+
+  return (
+    <AuthProvider>
+      <CartProvider>
+        <AppContent 
+          products={products}
+          authModalOpen={authModalOpen}
+          setAuthModalOpen={setAuthModalOpen}
+          cartModalOpen={cartModalOpen}
+          setCartModalOpen={setCartModalOpen}
+        />
+      </CartProvider>
+    </AuthProvider>
+  );
+};
+
+const AppContent = ({ products, authModalOpen, setAuthModalOpen, cartModalOpen, setCartModalOpen }) => {
+  const { addToCart } = useCart();
+
   const handleAddToCart = async (product) => {
-    const { addToCart } = useCart();
     const result = await addToCart(product.id, 1, product.price);
     
     if (result.success) {
@@ -727,43 +752,31 @@ const App = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
-      </div>
-    );
-  }
-
   return (
-    <AuthProvider>
-      <CartProvider>
-        <div className="min-h-screen bg-white">
-          <Header 
-            onAuthClick={() => setAuthModalOpen(true)}
-            onCartClick={() => setCartModalOpen(true)}
-          />
-          
-          <main>
-            <Hero />
-            <ProductGrid 
-              products={products} 
-              onAddToCart={handleAddToCart}
-            />
-          </main>
+    <div className="min-h-screen bg-white">
+      <Header 
+        onAuthClick={() => setAuthModalOpen(true)}
+        onCartClick={() => setCartModalOpen(true)}
+      />
+      
+      <main>
+        <Hero />
+        <ProductGrid 
+          products={products} 
+          onAddToCart={handleAddToCart}
+        />
+      </main>
 
-          <AuthModal 
-            isOpen={authModalOpen} 
-            onClose={() => setAuthModalOpen(false)} 
-          />
-          
-          <CartModal 
-            isOpen={cartModalOpen} 
-            onClose={() => setCartModalOpen(false)} 
-          />
-        </div>
-      </CartProvider>
-    </AuthProvider>
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
+      />
+      
+      <CartModal 
+        isOpen={cartModalOpen} 
+        onClose={() => setCartModalOpen(false)} 
+      />
+    </div>
   );
 };
 
