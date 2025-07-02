@@ -229,7 +229,11 @@ def run_test_suite():
         # 3.3 Remove Item from Cart
         results["total"] += 1
         try:
-            response = requests.delete(f"{BACKEND_URL}/cart/remove/{results['test_product_id']}", headers=auth_headers)
+            # Let's print the URL we're trying to access for debugging
+            remove_url = f"{BACKEND_URL}/cart/remove/{results['test_product_id']}"
+            print(f"DEBUG: Attempting to remove item with URL: {remove_url}")
+            
+            response = requests.delete(remove_url, headers=auth_headers)
             success = response.status_code == 200 and "cart" in response.json()
             if success:
                 results["passed"] += 1
