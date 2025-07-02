@@ -266,7 +266,13 @@ def run_test_suite():
         # 4.2 Create Order
         results["total"] += 1
         order_data = {
-            "items": [cart_item],
+            "items": [
+                {
+                    "product_id": results["test_product_id"],
+                    "quantity": 1,
+                    "price": 1199.99
+                }
+            ],
             "total_amount": 1199.99,
             "payment_method": "credit_card",
             "shipping_address": {
@@ -275,9 +281,14 @@ def run_test_suite():
                 "state": "Test State",
                 "zip": "12345",
                 "country": "Test Country"
-            }
+            },
+            "status": "pending",  # Added required field
+            "user_id": ""  # This will be set by the server
         }
         try:
+            # Let's print the order data for debugging
+            print(f"DEBUG: Order data: {json.dumps(order_data, indent=2)}")
+            
             response = requests.post(f"{BACKEND_URL}/orders", json=order_data, headers=auth_headers)
             success = response.status_code == 200 and "order_id" in response.json()
             if success:
