@@ -7,13 +7,15 @@ import {
   Header, 
   HeroSection, 
   FeaturesSection, 
-  StatisticsSection, 
-  CategoriesSection, 
-  FeaturedProducts,
-  RecommendationsSection,
+  StatisticsSection,
   PaymentModal,
   Footer 
 } from "./components";
+import {
+  CategoriesSection,
+  FeaturedProducts,
+  RecommendationsSection
+} from "./additional-components";
 
 const Home = () => {
   const { user, loadCart, trackEvent } = useApp();
