@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Optional
-from ..models.tracking import UserBehavior, ProductInteraction, RecommendationScore, UserRecommendations
-from ..models.product import Product
+from models.tracking import UserBehavior, ProductInteraction, RecommendationScore, UserRecommendations
+from models.product import Product
 from datetime import datetime, timedelta
 import logging
 import math
