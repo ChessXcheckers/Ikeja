@@ -87,7 +87,13 @@ async def get_products(
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
     """Get single product by ID"""
-    product = await db.products.find_one({"_id": product_id})
+    try:
+        # Convert string ID to ObjectId
+        object_id = ObjectId(product_id)
+        product = await db.products.find_one({"_id": object_id})
+    except:
+        # If not a valid ObjectId, try as string
+        product = await db.products.find_one({"_id": product_id})
     
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
