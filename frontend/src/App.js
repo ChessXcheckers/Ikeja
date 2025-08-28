@@ -10,7 +10,7 @@ const useAuth = () => useContext(AuthContext);
 const useCart = () => useContext(CartContext);
 
 // API base URL
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8081';
 
 // Utility functions
 const formatPrice = (price) => {
