@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-import uuid
+from bson import ObjectId
 from datetime import datetime
 
 # Import models
