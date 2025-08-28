@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict, Any
-from ..models.cart import Cart, CartItem, CartSummary, CartCreate, CartUpdate
-from ..models.product import Product
+from models.cart import Cart, CartItem, CartSummary, CartCreate, CartUpdate
+from models.product import Product
 from datetime import datetime, timedelta
 import logging
 
