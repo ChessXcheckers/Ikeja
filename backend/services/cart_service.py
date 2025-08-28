@@ -71,6 +71,12 @@ class CartService:
             existing_item.total_price = existing_item.quantity * existing_item.unit_price
         else:
             # Add new item
+            variants_dict = {}
+            if product_data.get("variants"):
+                # Convert variants list to dict for storage
+                for variant in product_data["variants"]:
+                    variants_dict[variant["name"]] = variant["value"]
+            
             cart_item = CartItem(
                 product_id=product_id,
                 product_name=product_data["name"],
@@ -81,7 +87,7 @@ class CartService:
                 currency=product_data["pricing"]["currency"],
                 supplier_id=product_data["supplier"]["id"],
                 supplier_name=product_data["supplier"]["name"],
-                variants=product_data.get("variants", {})
+                variants=variants_dict
             )
             cart.items.append(cart_item)
         
