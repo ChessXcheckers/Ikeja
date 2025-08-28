@@ -158,7 +158,12 @@ async def add_to_cart(
 ):
     """Add item to cart"""
     # Get product data
-    product = await db.products.find_one({"_id": product_id})
+    try:
+        object_id = ObjectId(product_id)
+        product = await db.products.find_one({"_id": object_id})
+    except:
+        product = await db.products.find_one({"_id": product_id})
+        
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     
