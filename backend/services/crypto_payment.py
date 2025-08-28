@@ -3,7 +3,7 @@ import requests
 import json
 import time
 from typing import Dict, Any, Optional
-from ..models.payment import CryptoPayment, CryptoPaymentMethod, PaymentResponse, PaymentStatus
+from models.payment import CryptoPayment, CryptoPaymentMethod, PaymentResponse, PaymentStatus
 import logging
 
 logger = logging.getLogger(__name__)
